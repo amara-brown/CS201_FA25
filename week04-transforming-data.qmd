@@ -98,8 +98,16 @@ penguins_male_female <- penguins_data %>%
 Let's let's make the same faceted scatter plot from the new dataframe. Can you make it interactive using `plotly`?
 
 ```{r, message=FALSE}
+mass_plot <- ggplot(data = penguins_male_female, aes(x = flipper_length_mm, y = body_mass_g, color = species, shape = island)) +
+  geom_point() +
+  theme_bw() +
+  scale_color_viridis_d() +
+  facet_grid(island ~ sex) +
+  labs(title = "Palmer Penguins, Flipper Lenght & Body Mass",
+       x = "flipper length (mm)",
+       y = "body mass (g)")
 
-
+ggplotly(mass_plot)
 ```
 
 Bonus: Instead of `facet_wrap()`, try using `facet_grid(island ~ sex)`. Now you have a grid layout with `island` on one axis and `sex` on the other.
@@ -121,7 +129,7 @@ How about if we wanted to make a bar graph of the *average body mass by species*
 2.  Now, create a bar graph using the *new* dataframe you made
 
     ```{r}
-    ggplot(data = , aes(x = , y = )) + # fill in the blanks
+    ggplot(data = average_mass, aes(x = species, y = average_body_mass)) + # fill in the blanks
       geom_bar(stat = "identity") # tells ggplot to use the actual y-values from your data, instead of counting the number of rows like a typical bar plot does
     ```
 
@@ -132,14 +140,21 @@ In the code chunk below, create a new dataframe called `average_flipper_length` 
 Bonus: If you assign this to a new object name, you can then use `view(object_name)` to see your results as a table.
 
 ```{r, message=FALSE}
-
+average_flipper_length <- penguins_data %>%
+  group_by(species) %>%
+  summarise(average_flipper_length = mean(flipper_length_mm, na.rm = TRUE))
 
 ```
 
 In the code chunk below, plot `average_flipper_length` using `ggplot()` and `geom_bar`. Customize the graph with colors, a theme, and labels, etc., as you wish.
 
 ```{r, message=FALSE}
-
+ggplot(data = average_flipper_length, aes(x = species, y = average_flipper_length, fill = species)) +
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(title = "TITLE", subtitle = "subtitle", x = "", y = "flippy")
 
 ```
 
@@ -150,7 +165,10 @@ Create a boxplot of body mass by species & make the plot interactive
 -   Hints: `geom_boxplot()`, `ggplotly()`
 
 ```{r, message=FALSE}
+ex2 <- ggplot(data = penguins_data, aes(x = species, y = body_mass_g, fill = species)) +
+  geom_boxplot()
 
+ggplotly(ex2)
 
 ```
 
@@ -161,7 +179,12 @@ How many penguins live on each Island?
 -   Hint: There are a few different ways, but you can use `summary()` to start.
 
 ```{r, message=FALSE}
+summary(as.factor(penguins_data$island))
 
+table(penguins_data$island)
+
+penguins_data %>%
+  count(island)
 
 ```
 
@@ -170,8 +193,11 @@ How many penguins live on each Island?
 Create a dataframe that has the average culmen depth for each species. Then, make a bar plot of the new dataframe with species on the x-axis and average culmen depth on the y-axis
 
 ```{r, message=FALSE}
+average_culmen_depth <- penguins_data %>%
+  group_by(species) %>%
+  summarise(average_culmen_depth = mean(culmen_depth_mm, na.rm = TRUE))
 
-
+ggplot(data)
 ```
 
 ## Push to GitHub!
