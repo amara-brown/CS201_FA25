@@ -68,7 +68,8 @@ Starting with the `penguins` data, keep all columns except `comments`. You shoul
 Assign this to a new object name so that you do not overwrite the original data!
 
 ```{r, message=FALSE, warning=FALSE}
-
+penguins_no_comments <- penguins %>%
+  select(-comments)
 
 ```
 
@@ -79,7 +80,10 @@ Starting with `penguins`, move the `individual_id` variable to the third column 
 Don't forget to assign to a new object name!
 
 ```{r, message=FALSE, warning=FALSE}
+penguins_relocate <- penguins%>%
+  relocate(individual_id, .after = sample_number)
 
+view(penguins_relocate)
 
 ```
 
@@ -90,8 +94,10 @@ Starting with `penguins`, convert the `island` column to `island_name`. Use `vie
 Don't forget to assign to a new object name.
 
 ```{r, message=FALSE, warning=FALSE}
+penguins_rename <- penguins %>%
+  rename(island_name = island)
 
-
+view(penguins_rename)
 ```
 
 ## 7. `mutate()`
@@ -99,7 +105,8 @@ Don't forget to assign to a new object name.
 Copy `penguins` to a new object called `mutate` and add a column that displays flipper length as kilometers. Call that new column `flippometers`.
 
 ```{r, message=FALSE, warning=FALSE}
-
+mutate <- penguins %>%
+  dplyr::mutate(flippometers = flipper_length_mm *0.000001)
 
 ```
 
@@ -112,7 +119,9 @@ Create a new dataframe called `number8`. Take `penguins`, group the data by isla
 Apply `na.rm` as needed.
 
 ```{r, message=FALSE, warning=FALSE}
-
+number8 <- penguins %>%
+  dplyr::group_by(island, species) %>%
+  dplyr::summarize(culmen_depth_mean = mean(culmen_depth_mm, na.rm = TRUE), culmen_length_mean = mean(culmen_length_mm, na.rm = TRUE))
 
 ```
 
@@ -121,7 +130,10 @@ Apply `na.rm` as needed.
 Starting with `penguins`, only keep observations for Biscoe island, group by `species`, then use `across()` to find the maximum value for any numeric variable
 
 ```{r, message=FALSE, warning=FALSE}
-
+across_filter <- penguins %>%
+  dplyr::filter(island == "Biscoe") %>%
+  dplyr::group_by(species) %>%
+  dplyr::summarize(dplyr::across(where(is.numeric),max,na.rm = TRUE))
 
 ```
 
@@ -130,7 +142,9 @@ Starting with `penguins`, only keep observations for Biscoe island, group by `sp
 Starting with `penguins`, create a new object called `count` that filters out all `sex` values other than `MALE` and `FEMALE`. Then, in the same piped function, display the count of all penguins by `island`, `species`, and `sex`.
 
 ```{r, message=FALSE, warning=FALSE}
-
+count <- penguins %>%
+  filter(sex%in%c("MALE", "FEMALE")) %>%
+  count(island, species, sex)
 
 ```
 
@@ -145,7 +159,8 @@ Create a new object called `case_when` from `penguins` and add a new column call
 Use `summary(as.factor(case_when$size))` to check your work
 
 ```{r, message=FALSE, warning=FALSE}
-
+case_when <- penguins %>%
+  mutate(size = case_when(body_mass_g >= 4050 ~ "big", body_mass_g < 4050 ~ "small"))
 
 ```
 
