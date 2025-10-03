@@ -11,12 +11,12 @@ editor: visual
 If you don't have the below packages, run the relevant lines here:
 
 ```{r}
-# install.packages("arrow")
-# install.packages("sf")
-# install.packages("remotes") # used to install packages from github
-# remotes::install_github("UrbanInstitute/urbnmapr")
-# install.packages("naniar")
-# install.packages("ggiraph")
+install.packages("arrow")
+install.packages("sf")
+install.packages("remotes") # used to install packages from github
+remotes::install_github("UrbanInstitute/urbnmapr")
+install.packages("naniar")
+install.packages("ggiraph")
 ```
 
 Load libraries (all of them).
@@ -84,13 +84,16 @@ teds_d %>%
 Replace values as needed.
 
 ```{r}
-
+teds_d[teds_d == "-9"] <- NA
 ```
 
 Inspect once again.
 
 ```{r}
+miss_var_summary(teds_d)
 
+teds_d %>%
+  tabyl(reason)
 ```
 
 ### Variable Re-coding
@@ -102,7 +105,16 @@ Many of the variables are currently in a format that is not helpful for our anal
 Start by inspecting this variable. Next, look up the Frequency of Use at Discharge variable in the codebook (`freq1_d`)
 
 ```{r}
+class(teds_d$freq1_d)
+summary(teds_d$freq1_d)
 
+teds_d <- teds_d %>%
+  mutate(freq1_d = recode(as.character(freq1_d),
+                          "1" = "no use",
+                          "2" = "some use",
+                          "3" = "daily use",
+                          .missing = "unknown"),
+         freq1_d = factor(freq1_d))
 ```
 
 #### Services
@@ -110,7 +122,16 @@ Start by inspecting this variable. Next, look up the Frequency of Use at Dischar
 Apply the relevant recoding for `services_d`
 
 ```{r}
+teds_d <- teds_d %>%
+  mutate(services_d = recode(as.character(services_d),
+                          "1" = "no use",
+                          "2" = "some use",
+                          "3" = "daily use",
+                          .missing = "unknown"),
+         services_d = factor(services_d))
 
+class(teds_d$services_d)
+summary(teds_d$services_d)
 ```
 
 #### Reason
@@ -118,7 +139,16 @@ Apply the relevant recoding for `services_d`
 Apply the relevant recoding for the Reason for Discharge variable.
 
 ```{r}
+teds_d <- teds_d %>%
+  mutate(reason = recode(as.character(reason),
+                          "1" = "no use",
+                          "2" = "some use",
+                          "3" = "daily use",
+                          .missing = "unknown"),
+         reason = factor(reason))
 
+class(teds_d$reason)
+summary(teds_d$reason)
 ```
 
 ## Quick Plotting Exercise
@@ -126,7 +156,14 @@ Apply the relevant recoding for the Reason for Discharge variable.
 Create three basic visualizations using `ggplot2` and the variables you recoded above.
 
 ```{r}
+ggplot(teds_d, aes(x = reason)) +
+  geom_bar()
 
+ggplot(teds_d, aes(x = services_d)) +
+  geom_bar()
+
+ggplot(teds_d, aes(x = freq1_d)) +
+  geom_bar()
 ```
 
 ## Do before Wednesday's Class
