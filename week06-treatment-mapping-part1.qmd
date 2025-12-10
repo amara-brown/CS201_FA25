@@ -124,9 +124,14 @@ Apply the relevant recoding for `services_d`
 ```{r}
 teds_d <- teds_d %>%
   mutate(services_d = recode(as.character(services_d),
-                          "1" = "no use",
-                          "2" = "some use",
-                          "3" = "daily use",
+                          "1" = "detox, 24-hour, hospital inpatient ",
+                          "2" = "detox, 24-hour, free-standing residential ",
+                          "3" = "rehab/residential, hospital (non-detox) ",
+                          "4" = "rehab/residential, short tem (30 days or fewer) ",
+                          "5" = "rehab/residential, long term (more than 30 days) ",
+                          "6" = "ambulatory, intensive outpatient ",
+                          "7" = "ambulatory, non-intensive outpatient ",
+                          "8" = "ambulatory, detoxification ",
                           .missing = "unknown"),
          services_d = factor(services_d))
 
@@ -141,9 +146,13 @@ Apply the relevant recoding for the Reason for Discharge variable.
 ```{r}
 teds_d <- teds_d %>%
   mutate(reason = recode(as.character(reason),
-                          "1" = "no use",
-                          "2" = "some use",
-                          "3" = "daily use",
+                         "1" = "treatment completed",
+                         "2" = "dropped out of treatment",
+                         "3" = "terminated by facility",
+                         "4" = "trandferred to another treatment program or facility",
+                         "5" = "incarcerated",
+                         "6" = "death",
+                         "7" = "other",
                           .missing = "unknown"),
          reason = factor(reason))
 

@@ -53,13 +53,13 @@ By the way, if you want to save this as a new csv, just run the below. I'm going
 
 How do we read boxplots? Also called box and whisker plot/diagram.
 
--   Middle line:
+-   Middle line: median (not average)
 
--   Box:
+-   Box: the middle 50% of the data
 
--   Whiskers:
+-   Whiskers: range of data extend 1.5x out of the IQR
 
--   Dots:
+-   Dots: outliers
 
 ```{r, message=FALSE}
 ggplot(pokedata, aes(y = hp)) +
@@ -88,6 +88,8 @@ ggplot(pokedata, aes(x = type_1, y = hp)) +
 -   `%>%` is also called `dplyr` pipe, `magrittr` pipe, pipe operator
 
 -   Do they work differently?
+
+technically yes, but they work the same for us... so no.
 
 ## Tip!
 
@@ -121,8 +123,10 @@ Options:
 -   Can you rotate the labels on the x-axis? Make the font smaller?
 
 ```{r}
-
-
+ggplot(data = na.omit(pokedata), aes(x= type_2, fill = generation)) +
+  geom_bar() +
+  facet_wrap(~type_1) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5))
 ```
 
 ## Covariation
@@ -178,7 +182,7 @@ Looks like there are other factors that could affect `price` – not just `cut`.
 
 ```{r, message=FALSE}
 ggplot(diamonds, aes(x = carat, y = price)) +
-  geom_point() # try making the points transparent to 0.05
+  geom_point(alpha = 0.05) # try making the points transparent to 0.05
 ```
 
 We can see the general trends, but it's a bit difficult to really see what is going on. Back to boxplots!
@@ -188,7 +192,8 @@ We can see the general trends, but it's a bit difficult to really see what is go
 First, we'll try making a boxplot with `x = carat` and `y = price`
 
 ```{r, message=FALSE}
-
+ggplot(diamonds, aes(x = carat, y = price)) +
+  geom_boxplot()
 ```
 
 It doesn't work that way! Boxplots are designed for categorical (factor) variables on the x-axis, and `carat` is continuous.
@@ -271,7 +276,7 @@ ggplot(diamonds, aes(x = cut, y = carat)) + # this is a violin plot
 
 #### Conclusions:
 
-The factor with the most influence on price is \_\_\_\_. There may be a trade-off between `carat` and `cut`. Perhaps larger carat diamonds can be profitably sold even with a low quality cut, for example.
+The factor with the most influence on price is carat. There may be a trade-off between `carat` and `cut`. Perhaps larger carat diamonds can be profitably sold even with a low quality cut, for example.
 
 We will stop here!
 

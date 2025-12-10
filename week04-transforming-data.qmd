@@ -197,7 +197,8 @@ average_culmen_depth <- penguins_data %>%
   group_by(species) %>%
   summarise(average_culmen_depth = mean(culmen_depth_mm, na.rm = TRUE))
 
-ggplot(data)
+ggplot(data = average_culmen_depth, aes(x = species, y = average_culmen_depth)) +
+  geom_bar(stat = "identity")
 ```
 
 ## Push to GitHub!

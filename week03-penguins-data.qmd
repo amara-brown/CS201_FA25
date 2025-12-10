@@ -255,6 +255,10 @@ ggplot(data = penguins_data, aes(x = flipper_length_mm, y = body_mass_g, color =
 
 ```{r, message=FALSE}
  
+ggplot(data = penguins_data, aes(x = culmen_depth_mm, fill = species)) +
+  geom_histogram() +
+  theme_bw() 
+
 ```
 
 -   Part 2
@@ -263,6 +267,10 @@ ggplot(data = penguins_data, aes(x = flipper_length_mm, y = body_mass_g, color =
 
 ```{r, message=FALSE}
 
+ggplot(data = penguins_data, aes(x = culmen_depth_mm, y = body_mass_g, color = species)) +
+  geom_point()
+  theme_bw()
+  scale_fill_viridis_d(option = "mako")
 ```
 
 -   Part 3
@@ -276,6 +284,7 @@ ggplot(data = penguins_data, aes(x = flipper_length_mm, y = body_mass_g, color =
         -   Run `ggplotly(plot_name)` and explore! Edit `plot_name` accordingly
 
 ```{r, message=FALSE}
+
 
 ```
 

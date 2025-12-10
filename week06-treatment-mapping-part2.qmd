@@ -172,7 +172,8 @@ Adding color bins, based on manual/equal interval breaks. (There are more advanc
 
 ```{r}
 percent_completed_by_state_map <- percent_completed_by_state_map %>% 
-  mutate(percentage_bin = cut(percentage_completed, breaks=c(0, 10, 20, 30, 40, 50, 60, 70, 80)))
+  mutate(percentage_bin = cut(percentage_completed, breaks=c(0, 10, 20, 30, 40, 50, 60, 70, 80)),
+                              percentage_bin = fct_explicit_na(percentage_bin, na_level = "no sata"))
 
 # check out the column you just added
 head(percent_completed_by_state_map)

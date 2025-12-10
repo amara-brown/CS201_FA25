@@ -1,0 +1,293 @@
+---
+title: "Worst Visualization Challenge"
+author: "Amber Camp" 
+date: "`r Sys.Date()`"
+format: html
+editor: visual
+toc: true
+---
+
+## Welcome to the Worst Visualization Challenge!
+
+Today, your job is to create a **terrible**, **awful** visualization.
+
+Your plot should use real data but it should be **bad** in terms of communication, clarity, or aesthetics.
+
+This is your chance to break all the rules… and then reflect on why those rules exist.
+
+Things to (ab)use:
+
+-   Bad color choices (neon on neon, anyone?)
+-   Confusing labels
+-   Misleading chart types (pie charts for time series, bar charts for continuous variables, etc.)
+-   Overplotting and clutter
+-   Illegible fonts or sizes
+-   Nonsense axis scaling
+
+Check online for resources on how to make *good* visuals, but here are a few really useful ones:
+
+-   <https://ggplot2-book.org>
+-   <https://r-graphics.org>
+-   <https://r-graph-gallery.com>
+
+## Load Libraries
+
+We'll start with the basics. If you want to do more (like make a map), you can load relevant packages later
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(janitor) 
+library(palmerpenguins)
+```
+
+## Today's Data Buffet
+
+Let's bring in an assortment of familiar datasets: `mtcars`, `diamonds`, `penguins`, and `mpg`. Add more later, if you want (try `airquality` or `starwars`). Feel free to explore and use what inspires your worst work.
+
+```{r, echo=FALSE}
+data("mtcars")
+data("diamonds")
+data("penguins")
+data("mpg")
+
+head(mtcars)
+head(diamonds)
+head(penguins)
+head(penguins_raw)
+head(mpg)
+```
+
+## Demo Time
+
+What do you expect to see below? How can we make this better?
+
+```{r,warning=FALSE}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, color = species)) + 
+  geom_point() +
+  labs(x = "Flipper Length",
+       y = "Body Mass",
+       title = "TITLE") +
+  theme_minimal()
+
+```
+
+How about this one?
+
+```{r, warning=FALSE}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, color = species)) +
+  geom_point(size = 6, shape = 8, alpha = 0.75) +
+  labs(title = "WHO EVEN KNOWS", x = "data", y = "more stuff") +
+  theme(plot.title = element_text(family = "Comic Sans MS", color = "orange", size = 28),
+        axis.text.x = element_text(angle = 145, color = "red"),
+        panel.background = element_rect(fill = "hotpink"))
+```
+
+## What Counts As "Bad" (but good for today)?
+
+### Allowed:
+
+-   Confusing or clashing color schemes (love to see it)
+-   Bad font choices
+-   Too many slices/bars/points
+-   Inappropriate chart types (bar chart of continuous data, etc.)
+-   Bad axis labels or weird ordering
+
+### Not Allowed:
+
+-   Fake or renamed variables (e.g., don’t label penguins as "cats")
+-   Non-working code
+
+## Layers
+
+The order of your layers matters. Use this to your advantage.
+
+```{r, warning=FALSE}
+ggplot(mpg, aes(x=displ, y=hwy)) +
+  geom_point(aes(color=class)) + 
+  labs(title="Engine Displacement vs. Highway MPG", x="Displacement (L)", y="Highway MPG") +
+  geom_smooth(method="lm", se=FALSE, color="black") 
+
+# you can reorganize the layers
+ggplot(mpg, aes(x=displ, y=hwy)) +
+  geom_smooth(method="lm", se=FALSE, color="black") +
+  geom_point(aes(color=class)) + 
+  labs(title="Engine Displacement vs. Highway MPG", x="Displacement (L)", y="Highway MPG") 
+
+
+
+
+## note: geom_point() (etc) is actually a shortcut for the following:
+# layer(mapping = NULL, 
+#   data = NULL,
+#   geom = "point", 
+#   stat = "identity",
+#   position = "identity")
+```
+
+You can also add layers to a "finished" plot:
+
+```{r}
+car_class <- ggplot(mpg) + 
+  geom_bar(
+    mapping = aes(x = manufacturer, fill = class),
+    width = 1) + 
+  theme(aspect.ratio = 1) +
+  scale_fill_brewer(palette = "Set3")
+
+car_class
+car_class + coord_flip()
+car_class + coord_polar()
+
+car_models <- ggplot(mpg) + 
+  geom_bar(
+    mapping = aes(x = fct_infreq(manufacturer), fill = model), 
+    show.legend = FALSE,
+    width = 1) + 
+  theme(aspect.ratio = 1) 
+
+car_models
+car_models + coord_flip()
+car_models + coord_polar()
+```
+
+### Using `ggsave`
+
+```{r, message=FALSE}
+# ggsave("car_models.png", plot = car_models, width = 6, height = 4, dpi = 300)
+ggsave("car_models.png", plot = car_models)
+```
+
+## Themes
+
+```{r, message=FALSE}
+ggplot(mpg, aes(x=displ, y=hwy)) +
+  geom_smooth(method="lm", se=FALSE, color="black") +
+  geom_point(aes(color=class)) + 
+  labs(title="Engine Displacement vs. Highway MPG", x="Displacement (L)", y="Highway MPG") +
+  theme_dark()
+```
+
+### ggthemes
+
+```{r, message=FALSE}
+install.packages("ggthemes")
+library(ggthemes)
+
+ggplot(mpg, aes(x=displ, y=hwy)) +
+  geom_point(aes(color=class)) + 
+  labs(title="Engine Displacement vs. Highway MPG", x="Displacement (L)", y="Highway MPG") +
+  geom_smooth(method="lm", se=FALSE, color="black") +
+  theme_void()
+```
+
+### Custom Themes
+
+```{r, warning=FALSE}
+ggplot(mpg, aes(x=displ, y=hwy)) +
+  geom_point(aes(color=class)) +
+  labs(title="Engine Displacement vs. Highway MPG", x="Displacement (L)", y="Highway MPG") +
+  theme(panel.background = element_rect(fill = "azure2"),
+  plot.background = element_rect(fill = "white"),
+  axis.text = element_text(size = 12, color = "slateblue", face = "italic"),
+  axis.title = element_text(size = 14, face = "bold"),
+  plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+  panel.grid.major = element_line(color = "grey", size = 0.5),
+  panel.grid.minor = element_line(color = "lightgrey", size = 0.25))
+
+custom_theme <- theme(
+  panel.background = element_rect(fill = "azure2"),
+  plot.background = element_rect(fill = "white"),
+  axis.text = element_text(size = 12, color = "blue", face = "italic"),
+  axis.title = element_text(size = 14, face = "bold"),
+  plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+  panel.grid.major = element_line(color = "grey", size = 0.5),
+  panel.grid.minor = element_line(color = "lightgrey", size = 0.25))
+
+ggplot(mpg, aes(x=displ, y=hwy)) +
+  geom_boxplot(aes(color=class)) +
+  labs(title="Engine Displacement vs. Highway MPG", x="Displacement (L)", y="Highway MPG") +
+  custom_theme
+```
+
+### `extrafont`
+
+```{r, message=FALSE}
+install.packages("extrafont")
+library(extrafont)
+
+# very slow, but you only need to run below ONCE!
+# font_import()
+# loadfonts(device = "pdf")
+
+ggplot(mpg, aes(x=displ, y=hwy)) +
+  geom_point(aes(color=class), size=25) +
+  labs(title="Engine Displacement vs. Highway MPG", x="Displacement (L)", y="Highway MPG") +
+  theme_minimal() +
+  theme(plot.title = element_text(family = "Comic Sans MS", size = 18, color = "burlywood", face = "bold", hjust = 0.5),
+    axis.title = element_text(family = "Times New Roman", size = 14, face = "italic"),
+    axis.text = element_text(family = "Courier New", size = 12, color = "red", face = "bold"),
+    legend.title = element_text(family = "Bauhaus 93", size = 16, hjust = 0.5),
+    legend.text = element_text(family = "Zapfino", size = 12),
+    panel.background = element_rect(fill = "blueviolet"))
+```
+
+## My final gift: Pie Charts
+
+There is no built in ggplot pie chart, but you can use `coord_polar()`!
+
+(There are other ways: <https://r-graphics.org/RECIPE-MISCGRAPH-PIE.html>)
+
+```{r}
+mpg_models <- mpg %>%
+  count(model)
+
+ggplot(mpg_models, aes(x = "", y = n, fill = model)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y", start = pi/3) +
+  scale_fill_manual(values = rainbow(nrow(mpg_models))) +
+  geom_text(aes(label = model), position = position_stack(vjust = 0.5), size = 2, angle = 45) + 
+  labs(title = "Chaos Pie", x = "???", y = "???") +
+  theme(
+    plot.title = element_text(family = "Papyrus", size = 22, color = "hotpink", face = "bold"),
+    axis.title = element_text(family = "Times New Roman", size = 12, face = "italic"),
+    axis.text = element_text(family = "Courier New", size = 8, color = "red", face = "bold"),
+    legend.title = element_text(family = "Comic Sans MS", size = 16, color = "blue"),
+    legend.text = element_text(family = "Zapfino", size = 6, color = "yellow"),
+    panel.background = element_rect(fill = "limegreen"))
+
+
+
+set.seed(55)
+cols <- sample(rainbow(nrow(mpg_models)))
+
+ggplot(mpg_models, aes(x = "", y = n, fill = model)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar(theta = "y", start = pi/3) +
+  scale_fill_manual(values = cols) +
+  geom_text(aes(label = model), position = position_stack(vjust = 0.1), size = 2, angle = 45) +
+  labs(title = "Chaos Pie", x = "???", y = "???") +
+  theme(
+    plot.title = element_text(family = "Papyrus", size = 22, color = "hotpink", face = "bold"),
+    axis.title = element_text(family = "Times New Roman", size = 12, face = "italic"),
+    axis.text = element_text(family = "Courier New", size = 8, color = "red", face = "bold"),
+    legend.title = element_text(family = "Comic Sans MS", size = 16, color = "blue"),
+    legend.text = element_text(family = "Zapfino", size = 6, color = "yellow"),
+    panel.background = element_rect(fill = "limegreen"))
+```
+
+## Your Turn!
+
+Your turn to build terrible plots. Be ready to share one final, creatively awful plot at the end of class (and, most importantly, to understand and explain why it's bad!!)
+
+Recommendation: Everyone in your group should be involved, but consider assigning primary roles like designer, coder, or presenter.
+
+```{r}
+
+
+
+```
+
+## Ok, one last gift:
+
+<https://viz.wtf> (old, but still fun!)
